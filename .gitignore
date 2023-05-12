@@ -21,6 +21,7 @@ linking
 
 # the .dll files in the project
 hair-sim/*.dll
+hair-sim/*.lib
 
 # Build results
 [Dd]ebug/
