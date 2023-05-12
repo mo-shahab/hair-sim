@@ -1,0 +1,226 @@
+to basically render anything in this project since we are using the obj (wavefront model);
+this is the overview of the entire project (not entirely) but this is what the project is driven by:
+
+To render and display an OBJ model in an OpenGL context, you'll need to follow these general steps:
+
+1. Set up the OpenGL context: Initialize the GLFW library, create a window, and set the OpenGL context.
+
+2. Load the OBJ model: Use a library like Assimp to load the OBJ file and extract the necessary data, such as vertices, normals, and texture coordinates.
+
+3. Create and compile shaders: Write vertex and fragment shaders using GLSL to define how the model should be rendered. Compile the shaders and link them into a shader program.
+
+4. Set up vertex buffers: Create vertex buffer objects (VBOs) to store the model's vertex data, normals, and texture coordinates. Bind the VBOs and upload the data.
+
+5. Set up vertex attribute pointers: Configure the vertex attribute pointers to specify the layout of the vertex data in the VBOs.
+
+6. Set up uniforms: Bind any necessary uniforms in the shader program, such as transformation matrices or material properties.
+
+7. Render the model: In the rendering loop, clear the screen, bind the shader program, and issue draw calls to render the model using the vertex data and indices.
+
+8. Display the result: Swap the front and back buffers to display the rendered model on the window.
+
+Here's a simplified code snippet to give you an idea of the structure:
+
+```cpp
+// Step 1: Set up the OpenGL context (GLFW initialization and window creation)
+
+// Step 2: Load the OBJ model using Assimp
+
+// Step 3: Create and compile shaders (vertex and fragment shaders)
+
+// Step 4: Set up vertex buffers (VBOs) and upload model data
+
+// Step 5: Set up vertex attribute pointers
+
+// Step 6: Set up uniforms (e.g., transformation matrices)
+
+// Rendering loop:
+while (!glfwWindowShouldClose(window)) {
+    // Step 7a: Clear the screen
+
+    // Step 7b: Bind the shader program
+
+    // Step 7c: Set up any necessary uniforms
+
+    // Step 7d: Issue draw calls to render the model
+
+    // Step 8: Swap front and back buffers
+    glfwSwapBuffers(window);
+
+    // Check for events and handle user input
+    glfwPollEvents();
+}
+
+// Clean up and exit
+```
+
+This is just a general outline, and you'll need to fill in the details and adapt the code to your specific requirements.
+
+====================================================================================================================
+
+To render and display a loaded model in OpenGL, you'll need to follow these steps:
+
+1. Set up the Vertex Buffer Objects (VBOs) and Vertex Array Object (VAO): VBOs store the vertex data (positions, normals, texture coordinates, etc.), and the VAO specifies how the data is organized. You'll need to generate and bind the VBOs and VAO, and upload the model's vertex data to the VBOs.
+
+2. Load and compile the vertex and fragment shaders: Shaders are programs that run on the GPU and define how vertices and fragments (pixels) are processed. You'll need to create vertex and fragment shader programs, load the shader source code, compile the shaders, and create a shader program by linking the compiled shaders together.
+
+3. Define the rendering loop: In the rendering loop, you'll clear the screen, set up the camera and projection matrices, bind the shader program, and render the model by issuing draw calls.
+
+4. Bind the VAO and set up attribute pointers: Before rendering, you'll need to bind the VAO and set up attribute pointers to specify how the vertex data is mapped to the shader input variables.
+
+5. Set up the camera and projection matrices: You'll need to define a camera to view the model and set up the projection matrix to define the perspective or orthographic projection.
+
+6. Issue draw calls to render the model: Finally, you'll issue draw calls using the appropriate OpenGL functions to render the model. This involves binding the appropriate textures, setting up uniforms, and calling functions such as `glDrawArrays` or `glDrawElements` to draw the geometry.
+
+Remember that the specific implementation details may vary depending on the OpenGL version, the library or framework you're using, and your rendering pipeline setup. It's important to consult the documentation and tutorials for the specific tools you're working with.
+
+Additionally, using a rendering engine or framework like Unity or Unreal Engine can simplify many of these steps and provide higher-level abstractions for rendering and displaying models.
+
+=======================================================================================================================
+
+what does all this mean
+
+1. Vertex Buffer Objects (VBOs): In OpenGL, a VBO is used to store vertex data, such as positions, normals, texture coordinates, and other attributes of the model. It's like a container that holds the vertex information. You'll need VBOs to provide the vertex data to OpenGL for rendering.
+
+2. Vertex Array Object (VAO): A VAO is used to organize and manage the vertex data stored in VBOs. It keeps track of the attribute locations and their formats, allowing you to easily switch between different sets of vertex data when rendering different objects. It helps in reducing redundant code and simplifies the process of binding vertex attributes.
+
+3. Shaders: Shaders are small programs written in a shading language (like GLSL in OpenGL) that run on the GPU. They define how the vertices and fragments (pixels) of the model are processed and shaded. Vertex shaders operate on each vertex of the model, transforming its position and other attributes, while fragment shaders determine the final color of each pixel. Shaders allow you to apply complex calculations and effects to the model during rendering.
+
+Now, let's discuss why you need these concepts:
+
+- VBOs and VAOs: By using VBOs and VAOs, you can efficiently store and manage the vertex data of your model. They allow you to separate the vertex data from the rendering code, making it easier to work with and modify the model's geometry. They also improve rendering performance by minimizing the data transfer between the CPU and GPU.
+
+- Shaders: Shaders give you full control over the rendering process. They allow you to manipulate the vertex positions, apply lighting calculations, textures, and other visual effects to the model. Shaders are responsible for transforming the 3D model into 2D images on the screen and determine how each pixel is shaded. They enable you to achieve realistic lighting, textures, and other visual effects in your rendering.
+
+By understanding and utilizing these concepts, you'll have the necessary tools to create visually appealing and interactive 3D graphics in OpenGL. It may take some time and practice to fully grasp these concepts, but with dedication and hands-on experience, you can gradually become proficient in OpenGL programming.
+
+======================================================================================================================
+
+when binding the vao and vbo into our project
+
+Here's a high-level overview of the process:
+
+1. Generate and bind a VAO: First, you need to generate a VAO using `glGenVertexArrays` and bind it using `glBindVertexArray`. The VAO will keep track of the settings and configurations for your vertex data.
+
+2. Generate and bind VBOs: Next, you need to generate VBOs for each type of vertex attribute data you have, such as positions, normals, texture coordinates, etc. Use `glGenBuffers` to generate VBO IDs and `glBindBuffer` to bind each VBO.
+
+3. Upload data to VBOs: Once the VBOs are bound, you can use `glBufferData` or `glBufferSubData` to upload the actual vertex data to each VBO. This involves providing the data array and its size, as well as specifying the usage pattern (e.g., `GL_STATIC_DRAW` if the data won't change frequently).
+
+4. Set up attribute pointers: After uploading the data, you need to specify how OpenGL should interpret the data stored in the VBOs. Use `glVertexAttribPointer` to define the layout and structure of the vertex attributes. This includes the attribute index, number of components, data type, stride, and offset within the VBO.
+
+5. Enable attribute arrays: Finally, enable the attribute arrays using `glEnableVertexAttribArray` to inform OpenGL that the vertex attributes are stored in the VBOs and should be used during rendering.
+
+By setting up the VBOs and VAO correctly, you'll be able to effectively organize and utilize your vertex data for rendering. It allows you to separate the vertex data from the rendering code, making it easier to work with and modify the geometry of the model.
+
+Note that the exact implementation may vary depending on the specific OpenGL version and the libraries you're using (e.g., GLFW, FreeGLUT). It's important to refer to the documentation and tutorials specific to the version and library you're working with.
+
+======================================================================================================================
+
+about the modularizing stuff for our project and all.
+
+Modularizing your project is a great approach for organizing and maintaining your codebase. It allows for better separation of concerns and promotes code reusability. Based on the objectives of your project, here are some suggested modules you can consider:
+
+1. Main Module: This module will contain the main entry point of your program, where you initialize the OpenGL context, create the window, and handle the main rendering loop. It will also coordinate the interaction between other modules.
+
+2. Model Module: This module will handle loading and processing the 3D model. It can have functions to load the model file (e.g., OBJ or FBX) using a library like Assimp, extract the necessary data (vertices, normals, texture coordinates), and store them in appropriate data structures. This module can also handle any transformations or manipulations applied to the model.
+
+3. Shader Module: This module will handle the creation, compilation, and linking of shaders. It can have functions to load shader source code from external files, compile the shaders, and create shader programs. This module can also handle setting shader uniforms for passing data to the shaders.
+
+4. Renderer Module: This module will be responsible for rendering the model and any other objects in the scene. It can have functions to set up the necessary buffers (VBOs, VAO), define the rendering pipeline (vertex attributes, shader binding), and perform the actual rendering using appropriate OpenGL function calls.
+
+5. Camera Module
+
+=====================================================================================================================
+
+The steps that I need to do for completing this project, i want this to be written for the documentation and all
+
+1. Matrix Transformations: Write the necessary code to perform transformations such as translation, rotation, and scaling on your model. This can be done using the transformation matrices (modelMatrix, viewMatrix, and projectionMatrix) defined in the `renderer.cpp` file. Apply these transformations to the model vertices before rendering.
+
+2. Camera: Implement the camera functionality to control the view of the scene. This involves updating the camera position, target, and up vector. You can handle camera movement using keyboard or mouse inputs and update the viewMatrix accordingly. This will allow you to navigate and explore the rendered scene.
+
+3. Shaders: Write the vertex and fragment shader code to handle the rendering pipeline. Shaders define how vertices are transformed, how colors or textures are applied, and how lighting is calculated. Compile the shaders and create a shader program using OpenGL functions.
+
+4. Link Shaders and Model: Bind the shader program and associate the attribute locations of your model vertices with the shader attributes. This allows the shaders to access the vertex data correctly. Also, bind the VAO and set the vertex attribute pointers.
+
+5. Lighting: Implement lighting calculations in the shaders. You can define light positions, colors, and material properties to achieve the desired lighting effects. This can include ambient, diffuse, and specular lighting calculations. Update the shader program with the necessary uniform variables for lighting.
+
+6. Render Loop: Modify the `display()` function in `rendering.cpp` to include the necessary steps for rendering the scene. This includes clearing the buffers, updating camera and transformation matrices, binding the shader program, rendering the model using the updated matrices, and swapping the buffers.
+
+By following these steps, you'll be able to render and display the model with appropriate transformations, camera control, lighting, and shaders. Remember to make use of OpenGL functions and appropriate data bindings to ensure the correct rendering pipeline.
+
+=====================================================================================================================
+ about the shaders and stuff
+
+To create and compile shaders in OpenGL, you can follow these steps:
+
+1. Create the shader source code: Write the shader source code in GLSL (OpenGL Shading Language). You need to create at least two shaders: a vertex shader and a fragment shader. The vertex shader processes each vertex of the model, while the fragment shader processes each fragment (pixel) of the model.
+
+2. Create the shader objects: In your code, create shader objects using `glCreateShader` function. You need to create a shader object for each type of shader (vertex and fragment).
+
+3. Set the shader source code: Use the `glShaderSource` function to specify the shader source code for each shader object. Pass the shader source code as an array of strings.
+
+4. Compile the shaders: After setting the shader source code, call `glCompileShader` to compile each shader object. Check for compilation errors using `glGetShaderiv` with `GL_COMPILE_STATUS`.
+
+5. Create the shader program: Create a shader program object using `glCreateProgram`. This program object will link together the vertex and fragment shaders.
+
+6. Attach the shaders to the program: Use `glAttachShader` to attach the vertex and fragment shaders to the shader program.
+
+7. Link the program: Call `glLinkProgram` to link the shader program. Check for linking errors using `glGetProgramiv` with `GL_LINK_STATUS`.
+
+8. Use the shader program: Activate the shader program using `glUseProgram` to start using the shaders for rendering.
+
+Here's a simplified example code snippet:
+
+```cpp
+// Create shader objects
+GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+
+// Set shader source code
+const char* vertexShaderSource = "your_vertex_shader_source_code";
+const char* fragmentShaderSource = "your_fragment_shader_source_code";
+glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+
+// Compile shaders
+glCompileShader(vertexShader);
+glCompileShader(fragmentShader);
+
+// Check compilation status
+int success;
+char infoLog[512];
+glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+if (!success) {
+    glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+    // Handle compilation error
+}
+
+glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+if (!success) {
+    glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+    // Handle compilation error
+}
+
+// Create shader program
+GLuint shaderProgram = glCreateProgram();
+
+// Attach shaders to the program
+glAttachShader(shaderProgram, vertexShader);
+glAttachShader(shaderProgram, fragmentShader);
+
+// Link the program
+glLinkProgram(shaderProgram);
+
+// Check linking status
+glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+if (!success) {
+    glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+    // Handle linking error
+}
+
+// Use the shader program
+glUseProgram(shaderProgram);
+```
+
+
+Note that this is a basic example, and you may need to modify and expand upon it based on your specific requirements.
