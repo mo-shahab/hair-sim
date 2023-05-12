@@ -19,6 +19,9 @@ mono_crash.*
 # libraries and stuff
 linking
 
+# the .dll files in the project
+hair-sim/*.dll
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
