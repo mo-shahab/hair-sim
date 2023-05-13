@@ -1,13 +1,12 @@
 // rendering.cpp
 
 // the libs custdef
-#include "model.h"
 #include "rendering.h"
-#include "renderer.h"
+#include <GL/glut.h>
 
 // standard libs
-#include <glad.h>
-#include <GL/glut.h>
+#include <fstream>
+#include <sstream>
 
 static GLuint vao;
 
@@ -17,7 +16,7 @@ void setupBuffers(const std::vector<Vertex>& vertices) {
 
     // Generate VAO and bind it
     glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
+    glBindVertexArray(vao); //possible error
 
     // Generate VBO and bind it
     glGenBuffers(1, &vbo);
@@ -42,21 +41,39 @@ void setupBuffers(const std::vector<Vertex>& vertices) {
 }
 
 // Function to render the scene
-void renderScene(const std::vector<Vertex>& vertices) {
+void renderScene(const std::vector<Vertex>& vertices, GLuint shaderProgram, float aspectRatio) {
+    // Read the shader source code from the vertex and fragment shader files
+    std::ifstream vertexShaderFile("vertShaders.vert");
+    std::ifstream fragmentShaderFile("fragShaders.frag");
+    std::stringstream vertexShaderStream, fragmentShaderStream;
+    vertexShaderStream << vertexShaderFile.rdbuf();
+    fragmentShaderStream << fragmentShaderFile.rdbuf();
+    std::string vertexShaderSource = vertexShaderStream.str();
+    std::string fragmentShaderSource = fragmentShaderStream.str();
+
+    // creating the shader program
+    shaderProgram = CreateShaderProgram(vertexShaderSource, fragmentShaderSource);
+
     // Clear the screen
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Enable depth testing
     glEnable(GL_DEPTH_TEST);
 
+    // Bind the shader program
+    glUseProgram(shaderProgram);
+
     // Set up your model-view-projection matrices
+    // ...
 
     // Set up the camera and projection matrices
-    setupCamera(1.0f); // Pass the desired aspect ratio value here
+    setupCamera(shaderProgram, aspectRatio); // Pass the shader program and aspect ratio here
 
     // Apply transformations (e.g., translation, rotation, scaling) to the model matrix
+    // ...
 
     // Set up your lighting parameters (if applicable)
+    // ...
 
     // Bind the VAO and draw the model
     glBindVertexArray(vao);
@@ -65,8 +82,4 @@ void renderScene(const std::vector<Vertex>& vertices) {
 
     // Disable depth testing
     glDisable(GL_DEPTH_TEST);
-
-    // Swap buffers (if using double buffering)
-    glutSwapBuffers();
-
 }
