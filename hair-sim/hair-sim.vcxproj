@@ -135,11 +135,17 @@
     <ClCompile Include="model.cpp" />
     <ClCompile Include="renderer.cpp" />
     <ClCompile Include="rendering.cpp" />
+    <ClCompile Include="shaderUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="model.h" />
     <ClInclude Include="renderer.h" />
     <ClInclude Include="rendering.h" />
+    <ClInclude Include="shaderUtils.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="fragShaders.frag" />
+    <None Include="vertShaders.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
