@@ -4,8 +4,9 @@
 
 #include "model.h"
 #include <glm/gtc/matrix_transform.hpp>
+#include <GL/glut.h>
 
-void setupCamera(float aspectRatio);
+void setupCamera(GLuint shaderProgram, float aspectRatio);
 void setupLighting();
 
 #endif
