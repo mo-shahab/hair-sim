@@ -268,3 +268,134 @@ but lets see if it is possible to do, i guess it will take some time, but if i d
 get what i imagined while deciding on this topic
 
 <<<<<-journal->>>>>
+
+====================================================================================================================
+
+the biggest setback is solved 
+
+when debugged the project found out that the vao and vbo had some error
+
+Based on the information you provided, it appears that the crash is occurring when trying to generate the vertex array object (VAO) and vertex buffer object (VBO) in the `setupBuffers` function. The error message suggests an access violation at memory location 0x0000000000000000, which typically indicates a null pointer or uninitialized variable.
+
+To troubleshoot this issue, you can try the following steps:
+
+1. Ensure that you have included the necessary headers (`#include <GL/glew.h>` or similar) for OpenGL extension loading and that the OpenGL context is properly initialized before calling the `setupBuffers` function.
+
+2. Check if the GLEW library (or equivalent) is properly initialized. Make sure you call `glewInit()` after creating the OpenGL context to load the necessary extensions.
+
+3. Verify that you have a valid OpenGL context before calling any OpenGL functions. This can be done by checking the return value of `glGetString(GL_VERSION)` or using a context management library like GLFW or SDL.
+
+4. Confirm that you have a compatible OpenGL version that supports vertex array objects. Check if `glewIsSupported("GL_ARB_vertex_array_object")` returns `GL_TRUE` before attempting to use VAOs.
+
+5. Ensure that the `vertices` vector passed to the `setupBuffers` function is not empty and contains valid vertex data.
+
+6. Double-check that you have the latest graphics drivers installed for your GPU. Outdated drivers can sometimes cause issues with OpenGL functionality.
+
+By carefully reviewing and addressing these points, you should be able to narrow down the cause of the access violation and resolve the issue with the `setupBuffers` function.
+
+===================================================================================================================
+
+the model has not been rendered still, there are few ways to make it work
+
+Yes, that's definitely a step in the right direction! The fact that the OpenGL window no longer crashes and remains open is a positive sign. Now we need to focus on why the rendering isn't displaying anything other than a white background.
+
+Here are a few things you can check to troubleshoot the rendering issue:
+
+1. Ensure that the shaders are compiled and linked correctly:
+   - Verify that the shader files are present and that their paths are correct.
+   - Check if there are any compilation or linking errors reported during shader creation. You can add additional error logging code to the shader loading functions to print any potential errors to the console or a log file.
+
+2. Verify that the vertex data is properly loaded:
+   - Check if the `model.vertices` vector contains the expected vertex data.
+   - Ensure that the vertex attributes (position, normal, texture coordinates) are correctly defined in the `Vertex` struct and aligned with the shader attributes.
+
+3. Confirm that the rendering pipeline is properly set up:
+   - Check if the VAO (Vertex Array Object) and VBO (Vertex Buffer Object) are bound correctly during rendering. Make sure they are bound before issuing the `glDrawArrays` or `glDrawElements` calls.
+   - Verify that the attribute locations in the shader program match the attribute indices set by `glVertexAttribPointer` calls.
+
+4. Double-check the OpenGL state and rendering parameters:
+   - Ensure that the OpenGL depth testing is enabled (`glEnable(GL_DEPTH_TEST)`).
+   - Verify that the clear color (`glClearColor`) and the viewport (`glViewport`) are set appropriately.
+   - Check if any OpenGL error is reported during the rendering process. You can add error checking after each OpenGL function call to detect any potential errors.
+
+By going through these steps and examining the specific areas mentioned, you should be able to identify the issue causing the rendering to show only a white background.
+
+=================================================================================================================
+
+the shaders were rewritten keeping the model in the mind
+
+In the fragment shader, you have the line vec4 texColor = texture(sampler2D, fragTexCoord);. Make sure to replace sampler2D with the actual name of your texture sampler. If you haven't defined a sampler uniform in your shader code, you'll need to add it and bind the appropriate texture unit before rendering.
+
+The vertex shader calculates the position of the vertex in the world space using the model matrix. Make sure you pass the correct model matrix uniform to the shader, which represents the transformation applied to the hair model.
+
+Verify that the view and projection matrices are correctly passed to the shaders as uniforms. These matrices define the camera view and projection transformations and should be calculated appropriately based on your desired camera settings.
+
+Overall, the shaders seem to handle lighting calculations, texture mapping, and transformation correctly, which are essential for rendering the hair model. Make sure to set up the necessary uniform variables and bind the texture properly in your code to make use of these shaders effectively.
+
+===================================================================================================================
+
+what is all this about the shaders in the first place, what is the projection and anything that is being discussed rn
+and what is the model matrix and the transformation
+
+In simple terms, the model matrix is a transformation matrix that defines the position, rotation, and scale of an object in the world space. It is used to convert the vertex positions of the hair model from local coordinates (relative to the model's own coordinate system) to world coordinates (relative to the global coordinate system).
+
+In the vertex shader, the line `fragPos = vec3(model * vec4(position, 1.0));` applies the model matrix transformation to each vertex position (`position`) of the hair model. This transformed vertex position (`fragPos`) is then used for further calculations, such as lighting.
+
+To ensure that the hair model is rendered correctly, you need to pass the correct model matrix as a uniform to the vertex shader. This model matrix represents the desired transformation applied to the hair model. Depending on your application, you might have a separate model matrix for each hair model or a shared model matrix for multiple instances of the same model.
+
+You'll need to set up the model matrix in your code and pass it to the shader as a uniform variable before rendering the hair model. The specific implementation details will depend on your code structure and how you handle matrices and uniforms.
+
+Overall, the model matrix allows you to position, rotate, and scale the hair model in the 3D world, so it appears in the desired location and orientation.
+
+=====================================================================================================================
+
+the breakdown of the shaders and other stuff 
+
+Here's a breakdown of the steps performed in the function:
+
+Create shader objects:
+
+Two shader objects are created: vertexShader and fragmentShader.
+The shader source code for each shader is compiled using the CompileShader function (not shown in your code).
+Create shader program:
+
+A shader program object is created using glCreateProgram() function, and its ID is stored in the shaderProgram variable.
+Attach shaders to the program:
+
+The compiled vertex shader and fragment shader are attached to the shader program using glAttachShader() function.
+Link the shader program:
+
+The shader program is linked using glLinkProgram() function.
+After linking, you retrieve the location of the model uniform using glGetUniformLocation() function and store it in modelMatrixLoc.
+Check linking status:
+
+The function retrieves the linking status using glGetProgramiv() and checks if it is GL_FALSE.
+If linking fails, an error message is printed with the linking log obtained from glGetProgramInfoLog().
+Clean up shader objects:
+
+The compiled vertex shader and fragment shader objects are deleted using glDeleteShader() function.
+Return the shader program:
+
+The function returns the ID of the created shader program.
+
+====================================================================================================================
+
+<<<<<-journal->>>>>
+13-05-2023
+
+so there were lot of problems solved, the opengl window used to crash with a white background and nothing happening, and
+ now it wont happen.
+i had made a way to log the errors that are occuring in the opengl window, but as it was not running i mean as it was
+ crashing whenever the project was run, the errors were just not logging. 
+and now the crashing does not happen, but still the model has not been rendered, this leaves the internal implementation. that is that there is something wrong from my side, my shaders might not be working properly or
+ something like that
+and also since i can know the errors that are occuring while the opengl window is running that can be solved sooner or 
+later. 
+to setup up the buffers, that is getting the vertices from the obj file and then somehow managing it to be stored in the 
+c++ data structure, and then making it be useful in rendering the model, setting up buffers becomes really important
+
+i dont think there might be any problem with this, or maybe there is, i just have to find a proper way to link the 
+shaders and let the shaders understand what it is supposed to do
+
+we can get there. 
+<<<<<-journal->>>>>
