@@ -552,7 +552,7 @@ we can get there.
 =====================================================================================================================
 so this is how it looked the for the first time ever when the model rendered into the opengl context
 ![Screenshot (39)](https://github.com/mo-shahab/hair-sim/assets/98043363/cef7e419-ce5c-454c-b848-6696abe35d46)
-<b>needs some working on this, projection!<b>
+needs some working on this, projection!
 =====================================================================================================================
 tried with some other model
 ![Screenshot (41)](https://github.com/mo-shahab/hair-sim/assets/98043363/36aa72e2-897f-497d-b26d-ed322c52f2e8)
