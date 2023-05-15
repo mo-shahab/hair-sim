@@ -4,9 +4,9 @@
 #include <glad.h>
 
 // Define the camera parameters
-glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
-glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+//glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 3.0f);
+//glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
+//glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
 // Define the transformation matrices
 glm::mat4 modelMatrix = glm::mat4(1.0f);
@@ -21,9 +21,9 @@ glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
 
 void setupCamera(GLuint shaderProgram, float aspectRatio) {
     // Set the camera position, target, and up vectors
-    glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 3.0f);
-    glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
-    glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+    //glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 3.0f);
+    //glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
+    //glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
     // Set the view matrix
     glm::mat4 viewMatrix = glm::lookAt(cameraPosition, cameraTarget, cameraUp);
@@ -44,7 +44,15 @@ void setupCamera(GLuint shaderProgram, float aspectRatio) {
 
 
 // Function to set up lighting
-void setupLighting() {
-    // Set the light position and color in the shader program
-    // ...
+void setupLight(GLuint shaderProgram, const glm::vec3& lightPos, const glm::vec3& viewPos)
+{
+    // Get the uniform locations for the light position and view position
+    GLint lightPosLoc = glGetUniformLocation(shaderProgram, "lightPos");
+    GLint viewPosLoc = glGetUniformLocation(shaderProgram, "viewPos");
+
+    // Set the light position uniform
+    glUniform3fv(lightPosLoc, 1, glm::value_ptr(lightPos));
+
+    // Set the view position uniform
+    glUniform3fv(viewPosLoc, 1, glm::value_ptr(viewPos));
 }

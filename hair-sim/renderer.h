@@ -7,6 +7,7 @@
 #include <GL/glut.h>
 
 void setupCamera(GLuint shaderProgram, float aspectRatio);
-void setupLighting();
+void setupCamera(GLuint shaderProgram, float aspectRatio);
+void setupLight(GLuint shaderProgram, const glm::vec3& lightPos, const glm::vec3& viewPos);
 
 #endif
