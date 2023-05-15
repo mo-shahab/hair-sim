@@ -10,9 +10,10 @@
 
 std::ofstream errorLog;// Declare the error log file stream
 GLuint shaderProgram;
+int window;
+unsigned char g_key = 0;
 
-
-Model model("C:/Users/User/OneDrive/Documents/opengl_rend/cube.obj");
+Model model("C:/Users/User/OneDrive/Documents/opengl_rend/Mustang.obj");
 
 // Function to check and log OpenGL errors
 void checkGLErrors(const std::string& message)
@@ -34,6 +35,11 @@ void cleanup()
     // ...
 }
 
+// this is to update the value so that i can pass this in the rendering.cpp file
+void keyboardCallback(unsigned char key, int x, int y) {
+    g_key = key;
+}
+
 void initializeGLAD() {
     if (!gladLoadGL()) {
         std::cerr << "Failed to initialize GLAD" << std::endl;
@@ -47,8 +53,13 @@ void initializeOpenGL(int argc, char** argv)
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
     glutInitWindowSize(800, 600);
-    glutCreateWindow("hair simulation");
+    window = glutCreateWindow("hair simulation");
 
+    // Set the keyboard callback function for special keys
+    //glutSpecialFunc(processKeyboardInput);
+    //glutKeyboardFunc(processKeyboardInput);
+    glutKeyboardFunc(keyboardCallback);
+    glutKeyboardUpFunc(processKeyboardRelease);
     // Initialize GLAD
     initializeGLAD();
     // Open the error log file
@@ -82,13 +93,32 @@ void display() {
     float aspectRatio = calculateAspectRatio();
 
     // Call your rendering function with the aspectRatio parameter
-    renderScene(model.vertices, shaderProgram, aspectRatio);
+    renderScene(model.vertices, shaderProgram, aspectRatio, g_key);
 
     // Swap buffers (if using double buffering)
     glutSwapBuffers();
 
     // checking errors, mostly logging them in a separate file
     checkGLErrors("rendering");
+}
+
+
+// debugging funcitions!!! for dev
+void validateModelData(const std::vector<Vertex>& vertices)
+{
+    for (const Vertex& vertex : vertices)
+    {
+        // Print position
+        std::cout << "Position: (" << vertex.position.x << ", " << vertex.position.y << ", " << vertex.position.z << ")" << std::endl;
+
+        // Print normal
+        std::cout << "Normal: (" << vertex.normal.x << ", " << vertex.normal.y << ", " << vertex.normal.z << ")" << std::endl;
+
+        // Print texture coordinates
+        //std::cout << "Texture Coordinates: (" << vertex.texCoord.x << ", " << vertex.texCoord.y << ")" << std::endl;
+
+        std::cout << std::endl;
+    }
 }
 
 
@@ -100,6 +130,8 @@ int main(int argc, char** argv) {
     glutDisplayFunc(display);
     //logOpenGLErrors();
 
+    /*
+    
     // Setup buffers
     if (!model.vertices.empty()) {
         setupBuffers(model.vertices);
@@ -107,7 +139,10 @@ int main(int argc, char** argv) {
     else {
         std::cout << "Unable to load the model. Exiting..." << std::endl;
         return 1;
+
     }
+    */
+    //validateModelData(model.vertices);
 
     // Start the main loop
     glutMainLoop();
