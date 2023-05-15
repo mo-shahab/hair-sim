@@ -3,13 +3,13 @@
 #define RENDERING_H
 
 #include "model.h"
-#include "renderer.h"
 #include "shaderUtils.h"
 
-// Function to create and bind the VAO and VBO
-void setupBuffers(const std::vector<Vertex>& vertices);
+void processKeyboardInput(unsigned char key, int x, int y);
+void processKeyboardRelease(unsigned char key, int x, int y);
 
 // Function to render the scene
-void renderScene(const std::vector<Vertex>& vertices, GLuint shaderProgram, float aspectRatio);
+void renderScene(const std::vector<Vertex>& vertices, GLuint shaderProgram, float aspectRatio, unsigned char key);
+
 
 #endif // RENDERING_H
