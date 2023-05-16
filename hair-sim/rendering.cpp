@@ -218,7 +218,7 @@ void renderScene(const std::vector<Vertex>& vertices, GLuint shaderProgram, floa
 
     // Bind the VAO and draw the model
     glBindVertexArray(vao);
-    glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+    glDrawArrays(GL_LINES, 0, vertices.size());
     glBindVertexArray(0);
 
    // processKeyboardRelease(currentKey, 0, 0);
