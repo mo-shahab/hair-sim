@@ -550,14 +550,26 @@ shaders and let the shaders understand what it is supposed to do
 we can get there. 
 <<<<<-journal->>>>>
 =====================================================================================================================
+
 so this is how it looked the for the first time ever when the model rendered into the opengl context
 ![Screenshot (39)](https://github.com/mo-shahab/hair-sim/assets/98043363/cef7e419-ce5c-454c-b848-6696abe35d46)
 needs some working on this, projection!
+
 =====================================================================================================================
+
 tried with some other model
 ![Screenshot (41)](https://github.com/mo-shahab/hair-sim/assets/98043363/36aa72e2-897f-497d-b26d-ed322c52f2e8)
+
 =====================================================================================================================
+
+
 this is when i changed the drawing attribute from triangles to lines, something it is kinda working 
 ![Screenshot (44)](https://github.com/mo-shahab/hair-sim/assets/98043363/2c5d5540-3e5d-4a82-b32c-f56da2ab2e50)
 
 ![Screenshot (45)](https://github.com/mo-shahab/hair-sim/assets/98043363/cf845c94-dd25-4af1-b141-c283863054ae)
+
+
+======================================================================================================================
+
+so stuff now looks like this its very cool and all
+
