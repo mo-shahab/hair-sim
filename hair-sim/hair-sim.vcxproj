@@ -137,6 +137,7 @@
     <ClCompile Include="shaderUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="main.h" />
     <ClInclude Include="model.h" />
     <ClInclude Include="renderer.h" />
     <ClInclude Include="rendering.h" />
