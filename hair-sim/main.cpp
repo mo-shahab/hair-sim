@@ -11,9 +11,9 @@
 std::ofstream errorLog;// Declare the error log file stream
 GLuint shaderProgram;
 int window;
-unsigned char g_key = 0;
+unsigned char currentKey = 0;
 
-Model model("C:/Users/User/OneDrive/Documents/opengl_rend/Mustang.obj");
+Model model("C:/Users/User/OneDrive/Documents/opengl_rend/female_hair.obj");
 
 // Function to check and log OpenGL errors
 void checkGLErrors(const std::string& message)
@@ -37,8 +37,16 @@ void cleanup()
 
 // this is to update the value so that i can pass this in the rendering.cpp file
 void keyboardCallback(unsigned char key, int x, int y) {
-    g_key = key;
+    currentKey = key;
+    //std::cout << currentKey << std::endl;
+    processKeyboardInput(currentKey, x, y);
 }
+
+void keyboardUpCallback(unsigned char key, int x, int y) {
+    //currentKey = 0;
+    processKeyboardRelease(key, x, y);
+}
+
 
 void initializeGLAD() {
     if (!gladLoadGL()) {
@@ -49,17 +57,22 @@ void initializeGLAD() {
 
 void initializeOpenGL(int argc, char** argv)
 {
+    // Desired aspect ratio
+    float aspectRatio = 16.0f / 9.0f;
+
+    // Calculate the window width and height based on the aspect ratio
+    int windowWidth = 800;  // Adjust the width as needed
+    int windowHeight = static_cast<int>(windowWidth / aspectRatio);
     // Initialize GLUT and create a window
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
-    glutInitWindowSize(800, 600);
+    glutInitWindowSize(windowWidth, windowHeight);
     window = glutCreateWindow("hair simulation");
 
     // Set the keyboard callback function for special keys
     //glutSpecialFunc(processKeyboardInput);
-    //glutKeyboardFunc(processKeyboardInput);
     glutKeyboardFunc(keyboardCallback);
-    glutKeyboardUpFunc(processKeyboardRelease);
+    glutKeyboardUpFunc(keyboardUpCallback);
     // Initialize GLAD
     initializeGLAD();
     // Open the error log file
@@ -92,8 +105,13 @@ void display() {
     // Obtain the aspect ratio based on the window size or desired value
     float aspectRatio = calculateAspectRatio();
 
+    // Call the keyboard input handling functions
+    processKeyboardInput(currentKey, 0, 0);
+
     // Call your rendering function with the aspectRatio parameter
-    renderScene(model.vertices, shaderProgram, aspectRatio, g_key);
+    renderScene(model.vertices, shaderProgram, aspectRatio);
+
+    processKeyboardRelease(currentKey, 0, 0);
 
     // Swap buffers (if using double buffering)
     glutSwapBuffers();
