@@ -2,6 +2,7 @@
 
 // the libs custdef
 #include "rendering.h"
+//#include "main.h"
 #include <GL/glut.h>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -11,12 +12,16 @@
 
 // to access the global variable
 extern int window;
+// extern unsigned char currentKey;
 
 // the stuff for the camera control
-glm::vec3 cameraPosition = glm::vec3(.0f, 10000.0f, 8.0f);
-glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 4.0f);
+glm::vec3 cameraPosition = glm::vec3(0.0f, 250.0f, 40.0f);
+glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, 1.0f);
+
+// Calculate the camera's front vector based on the camera position and target
+//glm::vec3 cameraFront = glm::normalize(cameraTarget - cameraPosition);
 
 float cameraSpeed = 5.05f;  // Adjust the camera movement speed as needed
 float cameraSensitivity = 0.1f;  // Adjust the camera rotation sensitivity as needed
@@ -106,7 +111,7 @@ void processMouseMovement(int x, int y) {
 }
 
 // Function to render the scene
-void renderScene(const std::vector<Vertex>& vertices, GLuint shaderProgram, float aspectRatio, unsigned char key) {
+void renderScene(const std::vector<Vertex>& vertices, GLuint shaderProgram, float aspectRatio) {
     // Generate and bind VAO and VBO
     GLuint vao, vbo;
     glGenVertexArrays(1, &vao);
@@ -137,15 +142,22 @@ void renderScene(const std::vector<Vertex>& vertices, GLuint shaderProgram, floa
     // Bind the shader program
     glUseProgram(shaderProgram);
 
+    // Recalculate the camera target based on the lifted camera position
+    cameraTarget = cameraPosition + cameraFront;
 
-    float fov = 45.0f;  // Aspect ratio of the viewport
+    float fov = 60.0f;  // Aspect ratio of the viewport
     float nearPlane = 0.1f;         // Near clipping plane
-    float farPlane = 100.0f;        // Far clipping plane
+    float farPlane = 150.0f;        // Far clipping plane
 
 
     // Set up the model-view-projection matrices
-    glm::mat4 modelMatrix = glm::mat4(1.0f); // Identity matrix for now
-    glm::mat4 viewMatrix = glm::mat4(1.0f);  // Identity matrix for now
+    glm::mat4 modelMatrix = glm::mat4(1.0f);
+    modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, -4.0f, -10.0f)); // Translate the model
+    modelMatrix = glm::rotate(modelMatrix, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)); // Rotate the model
+    modelMatrix = glm::scale(modelMatrix, glm::vec3(1.0f, 1.0f, 1.0f)); // Scale the model
+
+    // Update the view matrix using the new camera position and target
+    glm::mat4 viewMatrix = glm::mat4(4.0f);
     glm::mat4 projectionMatrix = glm::perspective(glm::radians(fov), aspectRatio, nearPlane, farPlane);
 
     // Set the uniform values for the model, view, and projection matrices
@@ -190,22 +202,26 @@ void renderScene(const std::vector<Vertex>& vertices, GLuint shaderProgram, floa
 
     // Call the keyboard input handling functions
     // Pass the appropriate key values obtained from GLUT
-    //processKeyboardInput('w', 0, 0);
+    processKeyboardInput(currentKey, 0, 0);
 
     // update on any camera movement
     viewMatrix = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
        
 
-    std::cout << GLUT_KEY_UP << std::endl;
-    processKeyboardInput(key, 0, 0);
+    //std::cout << GLUT_KEY_UP << std::endl;
+    
+    std::cout << currentKey << std::endl;
+    if (currentKey == 101) {
+        std::cout << "the thing is working" << std::endl;
+    }
     //processCameraMovement(window, cameraPosition, cameraFront, cameraUp, cameraSpeed, deltaTime);
 
     // Bind the VAO and draw the model
     glBindVertexArray(vao);
-    glDrawArrays(GL_LINES, 0, vertices.size());
+    glDrawArrays(GL_TRIANGLES, 0, vertices.size());
     glBindVertexArray(0);
 
-    processKeyboardRelease(key, 0, 0);
+   // processKeyboardRelease(currentKey, 0, 0);
 
     // Disable depth testing
     glDisable(GL_DEPTH_TEST);
