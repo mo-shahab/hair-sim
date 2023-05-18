@@ -133,11 +133,13 @@
     <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="model.cpp" />
+    <ClCompile Include="physics.cpp" />
     <ClCompile Include="rendering.cpp" />
     <ClCompile Include="shaderUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="model.h" />
+    <ClInclude Include="physics.h" />
     <ClInclude Include="renderer.h" />
     <ClInclude Include="rendering.h" />
     <ClInclude Include="shaderUtils.h" />
