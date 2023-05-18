@@ -41,6 +41,7 @@ void Model::ExtractMeshVertices(const aiMesh* mesh, std::vector<Vertex>& vertice
         // Add the vertex to the vertices vector
         vertices.push_back(vertex);
     }
+    // for debugging purposes
     for (unsigned int i = 0; i < 5 && i < vertices.size(); ++i) {
         const Vertex& vertex = vertices[i];
         std::cout << "Position: (" << vertex.position.x << ", " << vertex.position.y << ", " << vertex.position.z << ")" << std::endl;

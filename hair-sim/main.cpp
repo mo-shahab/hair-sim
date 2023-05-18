@@ -7,13 +7,66 @@
 // the addi header files
 #include "model.h"
 #include "rendering.h"
+#include "physics.h"
 
 std::ofstream errorLog;// Declare the error log file stream
 GLuint shaderProgram;
 int window;
 unsigned char currentKey = 0;
 
-Model model("C:/Users/User/OneDrive/Documents/opengl_rend/female_hair.obj");
+// this is the defn for the hair vertices
+std::vector<Vertex> hairVertices;
+
+Model model("C:/Users/User/OneDrive/Documents/opengl_rend/hair.obj");
+
+// isolating the hair vertices from the vertices of the sphere
+// Calculate the square of the sphere radius
+float sphereRadiusSquared = 1.0f * 1.0f; // the value of the radius in here would be changed
+                                         // as according to the radius of the sphere implemented!
+
+// Assuming the center of the sphere is at the origin (0, 0, 0)
+glm::vec3 sphereCenter(0.0f, 0.0f, 0.0f);
+
+float lengthSquared(const glm::vec3& vec) {
+    return vec.x * vec.x + vec.y * vec.y + vec.z * vec.z;
+}
+
+// Function to isolate hair vertices from the model vertices
+void IsolateHairVertices(const std::vector<Vertex>& allVertices, std::vector<Vertex>& hairVertices) {
+    // Iterate through all vertices and identify the hair vertices based on your desired criteria
+    for (const auto& vertex : allVertices) {
+    // Calculate the distance from the vertex to the sphere center
+        float distanceSquared = lengthSquared(vertex.position - sphereCenter);
+
+        // Check if the vertex is outside the sphere (i.e., greater than the sphere radius)
+        if (distanceSquared > sphereRadiusSquared) {
+        // Add the vertex to the hair strand vertices array
+            hairVertices.push_back(vertex);
+        }
+    }
+    // for debugging purposes
+    for (int i = 0; i < 5 && i < hairVertices.size(); ++i) {
+        const Vertex& vertex = hairVertices[i];
+        std::cout << "Hair Vertex Position: (" << vertex.position.x << ", " << vertex.position.y << ", " << vertex.position.z << ")" << std::endl;
+    }
+}
+
+// Now 'hairVertices' will contain the isolated hair strand vertices
+
+// debugging funcitions!!! for dev
+void validateModelData(const std::vector<Vertex>& vertices)
+{
+    for (const Vertex& vertex : vertices)
+    {
+        // Print position
+        std::cout << "Position: (" << vertex.position.x << ", " << vertex.position.y << ", " << vertex.position.z << ")" << std::endl;
+
+        // Print normal
+        std::cout << "Normal: (" << vertex.normal.x << ", " << vertex.normal.y << ", " << vertex.normal.z << ")" << std::endl;
+
+        std::cout << std::endl;
+    }
+}
 
 // Function to check and log OpenGL errors
 void checkGLErrors(const std::string& message)
@@ -57,6 +110,11 @@ void initializeGLAD() {
 
 void initializeOpenGL(int argc, char** argv)
 {
+    // isolating the hair vertices and all the vertices
+    IsolateHairVertices(model.vertices, hairVertices);
+    // implementing physics into the loaded vertices
+    initializeHairSimulation(hairVertices);  // Initialize the hair simulation with the loaded vertices
+
     // Desired aspect ratio
     float aspectRatio = 16.0f / 9.0f;
 
@@ -73,12 +131,12 @@ void initializeOpenGL(int argc, char** argv)
     //glutSpecialFunc(processKeyboardInput);
     glutKeyboardFunc(keyboardCallback);
     glutKeyboardUpFunc(keyboardUpCallback);
+
     // Initialize GLAD
     initializeGLAD();
     // Open the error log file
     errorLog.open("opengl_errors.txt");
 }
-
 
 void logOpenGLErrors()
 {
@@ -120,26 +178,6 @@ void display() {
     checkGLErrors("rendering");
 }
 
-
-// debugging funcitions!!! for dev
-void validateModelData(const std::vector<Vertex>& vertices)
-{
-    for (const Vertex& vertex : vertices)
-    {
-        // Print position
-        std::cout << "Position: (" << vertex.position.x << ", " << vertex.position.y << ", " << vertex.position.z << ")" << std::endl;
-
-        // Print normal
-        std::cout << "Normal: (" << vertex.normal.x << ", " << vertex.normal.y << ", " << vertex.normal.z << ")" << std::endl;
-
-        // Print texture coordinates
-        //std::cout << "Texture Coordinates: (" << vertex.texCoord.x << ", " << vertex.texCoord.y << ")" << std::endl;
-
-        std::cout << std::endl;
-    }
-}
-
-
 int main(int argc, char** argv) {
     // Initialize GLUT and create a window
     initializeOpenGL(argc, argv);
@@ -147,20 +185,6 @@ int main(int argc, char** argv) {
     // Set the display function
     glutDisplayFunc(display);
     //logOpenGLErrors();
-
-    /*
-    
-    // Setup buffers
-    if (!model.vertices.empty()) {
-        setupBuffers(model.vertices);
-    }
-    else {
-        std::cout << "Unable to load the model. Exiting..." << std::endl;
-        return 1;
-
-    }
-    */
-    //validateModelData(model.vertices);
 
     // Start the main loop
     glutMainLoop();
