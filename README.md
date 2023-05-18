@@ -573,3 +573,5 @@ this is when i changed the drawing attribute from triangles to lines, something 
 
 so stuff now looks like this its very cool and all
 
+![Untitled design](https://github.com/mo-shahab/hair-sim/assets/98043363/5c54c9cf-4a52-4bc2-8aae-b187720aea16)
+
