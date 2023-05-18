@@ -2,6 +2,8 @@
 
 // the libs custdef
 #include "rendering.h"
+#include "physics.h"
+
 //#include "main.h"
 #include <GL/glut.h>
 #include <glm/gtc/matrix_transform.hpp>
@@ -152,8 +154,8 @@ void renderScene(const std::vector<Vertex>& vertices, GLuint shaderProgram, floa
 
     // Set up the model-view-projection matrices
     glm::mat4 modelMatrix = glm::mat4(1.0f);
-    modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, -4.0f, -10.0f)); // Translate the model
-    modelMatrix = glm::rotate(modelMatrix, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)); // Rotate the model
+    modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, -10.0f)); // Translate the model
+    modelMatrix = glm::rotate(modelMatrix, glm::radians(-45.0f), glm::vec3(0.0f, 1.0f, 0.0f)); // Rotate the model
     modelMatrix = glm::scale(modelMatrix, glm::vec3(1.0f, 1.0f, 1.0f)); // Scale the model
 
     // Update the view matrix using the new camera position and target
@@ -215,6 +217,8 @@ void renderScene(const std::vector<Vertex>& vertices, GLuint shaderProgram, floa
         std::cout << "the thing is working" << std::endl;
     }
     //processCameraMovement(window, cameraPosition, cameraFront, cameraUp, cameraSpeed, deltaTime);
+
+    // updating the hair state in each frame
 
     // Bind the VAO and draw the model
     glBindVertexArray(vao);
