@@ -18,6 +18,8 @@ struct Vertex {
     glm::vec3 position;
     glm::vec3 normal;
     glm::vec2 texCoords;
+    float mass = 1.0f; // Assign the desired mass value
+    glm::vec3 velocity = glm::vec3(0.0f); // Assign the desired velocity value
 };
 
 // encapsulating stuff
