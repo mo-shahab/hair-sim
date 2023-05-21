@@ -14,6 +14,7 @@
 
 // to access the global variable
 extern int window;
+//extern std::vector<Vertex> hairVertices;
 // extern unsigned char currentKey;
 
 // the stuff for the camera control
@@ -52,6 +53,7 @@ void processKeyboardInput(unsigned char key, int x, int y) {
         cameraPosition += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
         break;
     }
+    //glutPostRedisplay();
 }
 
 void processKeyboardRelease(unsigned char key, int x, int y) {
@@ -110,6 +112,7 @@ void processMouseMovement(int x, int y) {
     front.y = sin(glm::radians(pitch));
     front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
     cameraFront = glm::normalize(front);
+    glutPostRedisplay();
 }
 
 // Function to render the scene
@@ -205,6 +208,9 @@ void renderScene(const std::vector<Vertex>& vertices, GLuint shaderProgram, floa
     // Call the keyboard input handling functions
     // Pass the appropriate key values obtained from GLUT
     processKeyboardInput(currentKey, 0, 0);
+
+    // Call the physics update function
+    //updateHairSimulation(modelMatrix);
 
     // update on any camera movement
     viewMatrix = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
