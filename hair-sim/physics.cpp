@@ -1,67 +1,92 @@
-#include "physics.h"					   // including necessary headers 
-#include <chrono>
-extern std::vector<Vertex> loadedVertices; // Declare the variable from main.cpp
-extern std::vector<Vertex> hairVertices;          // Store the hair strand vertices
-float hairMass;                            // Mass of each hair strand
-float hairElasticity;                      // Elasticity of the hair strands
-float hairFriction;                        // Friction coefficient for the hair strands
-// Define other necessary variables
+#include "physics.h"
+#include <stdlib.h>
 
-void initializeHairSimulation(const std::vector<Vertex>& vertices)
-{
-    // Assign the loaded model vertices to the hair vertices
-    hairVertices = vertices;
+HairStrand createHairStrand(int numVertices, int numSprings) {
+    HairStrand strand;
+    strand.numVertices = numVertices;
+    strand.numSprings = numSprings;
 
-    // Assign physical properties to the hair strands
-    hairMass = 1.0f;         // Adjust the mass value as per your requirements
-    hairElasticity = 0.5f;   // Adjust the elasticity value as per your requirements
-    hairFriction = 0.2f;     // Adjust the friction coefficient as per your requirements
+    // Allocate memory for vertices and springs
+    strand.vertices = (Vertex*)malloc(numVertices * sizeof(Vertex));
+    strand.springs = (Spring*)malloc(numSprings * sizeof(Spring));
 
-    // Set up other necessary initialization steps
+    // Initialize vertices and springs
+
+    return strand;
 }
 
-void ApplyGravity(std::vector<Vertex>& hairVertices, float gravity) {
-    // Define the gravitational force vector
-    glm::vec3 gravityVector(0.0f, -gravity, 0.0f);
+void destroyHairStrand(HairStrand& strand) {
+    // Free memory
+    free(strand.vertices);
+    free(strand.springs);
+}
 
+void applyForces(std::vector<Vertex>& hairVertices, float gravity, const glm::vec3& windDirection, float windStrength) {
     // Apply gravitational force to each hair vertex
-    for (unsigned int i = 0; i < hairVertices.size(); i++) {
-        // Update the position of the hair vertex based on gravity
-        hairVertices[i].position += gravityVector;
+    for (auto& vertex : hairVertices) {
+        vertex.position.y -= gravity; // Assuming y-axis is the vertical axis
+    }
+
+    // Apply wind force to each hair vertex based on wind direction and strength
+    for (auto& vertex : hairVertices) {
+        vertex.position += windDirection * windStrength;
     }
 }
 
-void updateHairSimulation()
-{
-    // this is the first try lets see if this works 
-    float gravity = 9.8f; // Define the gravity value
+void calculateSpringForces(const std::vector<Vertex>& hairVertices, float springStiffness, float restLength, std::vector<glm::vec3>& springForces) {
+    // Calculate spring forces between adjacent hair vertices
+    for (size_t i = 1; i < hairVertices.size(); ++i) {
+        const glm::vec3& currentPos = hairVertices[i].position;
+        const glm::vec3& previousPos = hairVertices[i - 1].position;
+        glm::vec3 springForce = springStiffness * (currentPos - previousPos) * (glm::length(currentPos - previousPos) - restLength);
+        springForces.push_back(springForce);
+    }
+}
 
+void applyDampingForces(std::vector<Vertex>& hairVertices, float dampingCoefficient) {
+    // Apply damping forces to each hair vertex based on its velocity
+    for (auto& vertex : hairVertices) {
+        vertex.position -= dampingCoefficient * vertex.position;
+    }
+}
 
-    // Set the desired simulation duration (in seconds)
-    float simulationDuration = 10.0f;
+void integrate(std::vector<Vertex>& hairVertices, float timeStep) {
+    // Perform numerical integration (e.g., Euler integration) to update positions and velocities
+    for (auto& vertex : hairVertices) {
+        // Update position using velocity and time step
+        vertex.position += vertex.velocity * timeStep;
 
-    // Get the current time
-    auto startTime = std::chrono::steady_clock::now();
-
-    // Update the hair simulation in your main loop
-    while (true) {
-        // Get the current time
-        auto currentTime = std::chrono::steady_clock::now();
-
-        // Calculate the elapsed time since the start of the simulation
-        float elapsedTime = std::chrono::duration<float>(currentTime - startTime).count();
-
-        // Check if the simulation duration has been reached
-        if (elapsedTime >= simulationDuration)
-        {
-            break;  // Exit the loop when the duration is reached
-        }
-
-        // Apply gravitational forces to the hair vertices
-        ApplyGravity(hairVertices, gravity);
-
-        // Update other physics calculations or simulations
-
+        // Update velocity (e.g., by applying external forces or constraints)
         // ...
+    }
+}
+
+void updateHair(std::vector<Vertex>& hairVertices, float gravity, const glm::vec3& windDirection, float windStrength, float springStiffness, float restLength, float dampingCoefficient, float timeStep) {
+    // Apply external forces (e.g., gravity, wind)
+    applyForces(hairVertices, gravity, windDirection, windStrength);
+
+    // Calculate spring forces
+    std::vector<glm::vec3> springForces;
+    calculateSpringForces(hairVertices, springStiffness, restLength, springForces);
+
+    // Apply spring forces
+    for (size_t i = 1; i < hairVertices.size(); ++i) {
+        glm::vec3& currentPos = hairVertices[i].position;
+        glm::vec3& previousPos = hairVertices[i - 1].position;
+        glm::vec3& currentVelocity = hairVertices[i].velocity;
+        glm::vec3& previousVelocity = hairVertices[i - 1].velocity;
+
+        // Update velocities based on spring forces and damping
+        glm::vec3 springForce = springForces[i - 1];
+        currentVelocity += (springForce / hairVertices[i].mass + gravity) * timeStep;
+        previousVelocity -= (springForce / hairVertices[i].mass + gravity) * timeStep;
+
+        // Apply damping forces
+        currentVelocity -= dampingCoefficient * currentVelocity * timeStep;
+        previousVelocity -= dampingCoefficient * previousVelocity * timeStep;
+
+        // Update positions using velocities
+        currentPos += currentVelocity * timeStep;
+        previousPos += previousVelocity * timeStep;
     }
 }
