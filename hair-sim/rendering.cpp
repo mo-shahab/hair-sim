@@ -14,8 +14,6 @@
 
 // to access the global variable
 extern int window;
-//extern std::vector<Vertex> hairVertices;
-// extern unsigned char currentKey;
 
 // the stuff for the camera control
 glm::vec3 cameraPosition = glm::vec3(0.0f, 250.0f, 40.0f);
@@ -35,9 +33,8 @@ bool firstMouse = true;
 float lastX = 0.0f;   // Last mouse X position
 float lastY = 0.0f;   // Last mouse Y position
 
-
 // camera being controlled by the function
-void processKeyboardInput(unsigned char key, int x, int y) {
+void processKeyboard(unsigned char key, int x, int y) {
     // Handle keyboard input
     switch (key) {
     case 'w':
@@ -53,7 +50,7 @@ void processKeyboardInput(unsigned char key, int x, int y) {
         cameraPosition += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
         break;
     }
-    //glutPostRedisplay();
+    glutPostRedisplay();
 }
 
 void processKeyboardRelease(unsigned char key, int x, int y) {
@@ -75,6 +72,7 @@ void processKeyboardRelease(unsigned char key, int x, int y) {
     }
 }
 
+bool isMousePressed = false;
 
 void processMouseMovement(int x, int y) {
     static bool firstMouse = true;
@@ -115,6 +113,16 @@ void processMouseMovement(int x, int y) {
     glutPostRedisplay();
 }
 
+void processMouseButton(int button, int state, int x, int y) {
+    if (button == GLUT_LEFT_BUTTON) {
+        if (state == GLUT_DOWN)
+            isMousePressed = true;
+        else if (state == GLUT_UP)
+            isMousePressed = false;
+    }
+}
+
+
 // Function to render the scene
 void renderScene(const std::vector<Vertex>& vertices, GLuint shaderProgram, float aspectRatio) {
     // Generate and bind VAO and VBO
@@ -123,7 +131,7 @@ void renderScene(const std::vector<Vertex>& vertices, GLuint shaderProgram, floa
     glBindVertexArray(vao);
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_DYNAMIC_DRAW);
 
     // Specify vertex attributes
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
@@ -140,6 +148,8 @@ void renderScene(const std::vector<Vertex>& vertices, GLuint shaderProgram, floa
     // Create the shader program
     shaderProgram = CreateShaderProgram(vertexShaderSource, fragmentShaderSource);
 
+    glClearColor(0.2f, 0.3f, 0.4f, 1.0f); // Set the background color (RGB values range from 0.0 to 1.0)
+
     // Clear the screen and enable depth testing
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
@@ -154,11 +164,14 @@ void renderScene(const std::vector<Vertex>& vertices, GLuint shaderProgram, floa
     float nearPlane = 0.1f;         // Near clipping plane
     float farPlane = 150.0f;        // Far clipping plane
 
+    // Calculate the rotation angle based on the elapsed time
+    float rotationAngle = glm::radians(10.0f) * glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
 
     // Set up the model-view-projection matrices
     glm::mat4 modelMatrix = glm::mat4(1.0f);
-    modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, -10.0f)); // Translate the model
-    modelMatrix = glm::rotate(modelMatrix, glm::radians(-45.0f), glm::vec3(0.0f, 1.0f, 0.0f)); // Rotate the model
+    modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, -1.0f, -10.0f)); // Translate the model
+    modelMatrix = glm::rotate(modelMatrix, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)); // Rotate the model
+    modelMatrix = glm::rotate(modelMatrix, rotationAngle, glm::vec3(0.0f, 1.0f, 0.0f));
     modelMatrix = glm::scale(modelMatrix, glm::vec3(1.0f, 1.0f, 1.0f)); // Scale the model
 
     // Update the view matrix using the new camera position and target
@@ -171,17 +184,7 @@ void renderScene(const std::vector<Vertex>& vertices, GLuint shaderProgram, floa
     GLuint projectionMatrixLoc = glGetUniformLocation(shaderProgram, "projection");
     glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
     glUniformMatrix4fv(viewMatrixLoc, 1, GL_FALSE, glm::value_ptr(viewMatrix));
-    glUniformMatrix4fv(projectionMatrixLoc, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
-
-    // Obtain the uniform locations for viewMatrix and projectionMatrix
-    GLuint viewMatrixLocation = glGetUniformLocation(shaderProgram, "view");
-    GLuint projectionMatrixLocation = glGetUniformLocation(shaderProgram, "projection");
-
-    // Set the view matrix in the shader program
-    glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, glm::value_ptr(viewMatrix));
-
-    // Set the projection matrix in the shader program
-    glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix)); // Implement this function to set up the camera matrices
+    glUniformMatrix4fv(projectionMatrixLoc, 1, GL_FALSE, glm::value_ptr(projectionMatrix)); 
 
     // Set up the lighting parameters
     glm::vec3 lightPos(1.0f, 1.0f, 1.0f);
@@ -191,32 +194,8 @@ void renderScene(const std::vector<Vertex>& vertices, GLuint shaderProgram, floa
     glUniform3fv(lightPosLoc, 1, glm::value_ptr(lightPos));
     glUniform3fv(viewPosLoc, 1, glm::value_ptr(viewPos));
 
-    // the camera is controlled by this function
-    // Input handling
-    // Define a variable to store the previous frame's time
-    static float previousFrame = 0.0f;
-
-    // Get the current frame's time
-    float currentFrame = glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
-
-    // Calculate deltaTime
-    float deltaTime = currentFrame - previousFrame;
-
-    // Update the previous frame's time for the next frame
-    previousFrame = currentFrame;
-
-    // Call the keyboard input handling functions
-    // Pass the appropriate key values obtained from GLUT
-    processKeyboardInput(currentKey, 0, 0);
-
-    // Call the physics update function
-    //updateHairSimulation(modelMatrix);
-
     // update on any camera movement
     viewMatrix = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
-       
-
-    //std::cout << GLUT_KEY_UP << std::endl;
     
     std::cout << currentKey << std::endl;
     if (currentKey == 101) {
@@ -224,7 +203,6 @@ void renderScene(const std::vector<Vertex>& vertices, GLuint shaderProgram, floa
     }
     //processCameraMovement(window, cameraPosition, cameraFront, cameraUp, cameraSpeed, deltaTime);
 
-    // updating the hair state in each frame
 
     // Bind the VAO and draw the model
     glBindVertexArray(vao);
@@ -239,4 +217,5 @@ void renderScene(const std::vector<Vertex>& vertices, GLuint shaderProgram, floa
     // Cleanup: delete VBO and VAO
     glDeleteBuffers(1, &vbo);
     glDeleteVertexArrays(1, &vao);
+    glutPostRedisplay();
 }
