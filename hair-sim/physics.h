@@ -30,14 +30,14 @@ HairStrand createHairStrand(int numVertices, int numSprings);
 
 void destroyHairStrand(HairStrand& strand);
 
-void applyForces(HairStrand& strand, float gravity, const glm::vec3& windDirection, float windStrength);
+void applyForces(Vertex* hairVertices, int numVertices, float gravity, const glm::vec3& windDirection, float windStrength);
 
-void calculateSpringForces(const HairStrand& strand, float springStiffness, float restLength, std::vector<glm::vec3>& springForces);
+void calculateSpringForces(const Vertex* hairVertices, int numVertices, float springStiffness, float restLength, std::vector<glm::vec3>& springForces);
 
-void applyDampingForces(HairStrand& strand, float dampingCoefficient);
+void applyDampingForces(Vertex* hairVertices, int numVertices, float dampingCoefficient);
 
-void integrate(HairStrand& strand, float timeStep);
+void integrate(Vertex* hairVertices, int numVertices, float timeStep);
 
-void updateHair(HairStrand& strand, float gravity, const glm::vec3& windDirection, float windStrength, float springStiffness, float restLength, float dampingCoefficient, float timeStep);
+void updateHair(Vertex* hairVertices, int numVertices, float gravity, const glm::vec3& windDirection, float windStrength, float springStiffness, float restLength, float dampingCoefficient, float timeStep);
 
 #endif // PHYSICS_H

@@ -38,6 +38,7 @@ void applyForces(Vertex* hairVertices, int numVertices, float gravity, const glm
 
 void calculateSpringForces(const Vertex* hairVertices, int numVertices, float springStiffness, float restLength, std::vector<glm::vec3>& springForces) {
     // Calculate spring forces between adjacent hair vertices
+    springForces.clear();
     for (int i = 1; i < numVertices; ++i) {
         const glm::vec3& currentPos = hairVertices[i].position;
         const glm::vec3& previousPos = hairVertices[i - 1].position;
