@@ -364,9 +364,6 @@ to efficiently render and simulate the hair strands.
 Remember, the implementation details can vary depending on your specific requirements and the libraries or frameworks you are using. 
 It's essential to understand the underlying concepts and adapt the code accordingly to suit your needs.
 
-If you have more specific details about your "female_hair" model or any specific requirements, 
-please provide them, and I'll be happy to guide you further in the implementation process.
-
 <<<<<-journal->>>>>
 12-05-2023
 so, until now the loading of the model and other stuff like binding the vao and vbo are done perfectly.
@@ -384,7 +381,7 @@ the biggest setback is solved
 
 when debugged the project found out that the vao and vbo had some error
 
-Based on the information you provided, it appears that the crash is occurring when trying to
+it appears that the crash is occurring when trying to
  generate the vertex array object (VAO) and vertex buffer object (VBO) in the `setupBuffers` function.
  The error message suggests an access violation at memory location 0x0000000000000000, 
 which typically indicates a null pointer or uninitialized variable.
@@ -581,7 +578,7 @@ so stuff now looks like this its very cool and all
 =====================================================================================================================
 final touches.
 this is how the model is given a little dynamism that it has
-I see that you have made some changes to the code. However, there are a few points that need to be addressed to ensure proper rotation:
+there are a few points that need to be addressed to ensure proper rotation:
 
 1. Move the model rotation calculation to the `renderScene` function, just before setting the model matrix uniform:
 
@@ -649,8 +646,6 @@ To add a background in an OpenGL window, you can make use of the `glClear()` fun
    The specific implementation details will depend on the image loading library and the format of the image you want to use.
 
 Remember to enable texturing by calling `glEnable(GL_TEXTURE_2D);` before rendering the background quad.
-
-I hope this helps you add a background to your OpenGL window. Let me know if you have any further questions!
 
 the textures in this case are avoided because of the lot of complexity while rendering and 
 to avoid a lot of computational resources 
