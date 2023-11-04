@@ -1,5 +1,7 @@
 # hair-sim
+
 this is the whole idea behind this project
+
 <<<<<-journal->>>>>
 started this: 12-04-2023
 
@@ -74,8 +76,8 @@ while (!glfwWindowShouldClose(window)) {
 ```
 
 This is just a general outline, and you'll need to fill in the details and adapt the code to your specific requirements.
-====================================================================================================================
-the first step
+#### ====================================================================================================================
+## the first step
 ![Screenshot (35)](https://github.com/mo-shahab/hair-sim/assets/98043363/a5321152-8d2b-4993-b4c6-a38a874ea732)
 ====================================================================================================================
 
@@ -116,7 +118,7 @@ Unreal Engine can simplify many of these steps and provide higher-level abstract
 
 =======================================================================================================================
 
-what does all this mean
+## what does all this mean
 
 1. Vertex Buffer Objects (VBOs): In OpenGL, a VBO is used to store vertex data, 
 such as positions, normals, texture coordinates, and other attributes of the model. 
@@ -150,7 +152,7 @@ you can gradually become proficient in OpenGL programming.
 
 ======================================================================================================================
 
-when binding the vao and vbo into our project
+## when binding the vao and vbo into our project
 
 Here's a high-level overview of the process:
 
@@ -183,7 +185,7 @@ you're using (e.g., GLFW, FreeGLUT). It's important to refer to the documentatio
 
 ======================================================================================================================
 
-about the modularizing stuff for our project and all.
+## about the modularizing stuff for our project and all.
 
 Modularizing your project is a great approach for organizing and maintaining your codebase. 
 It allows for better separation of concerns and promotes code reusability.
@@ -332,7 +334,7 @@ Note that this is a basic example, and you may need to modify and expand upon it
 
 ====================================================================================================================
 
-the complexity of the implementation would determine the things that you have to incorporate in your project
+## the complexity of the implementation would determine the things that you have to incorporate in your project
 
 Here are some considerations and potential modifications you might need to make:
 
@@ -412,7 +414,7 @@ the cause of the access violation and resolve the issue with the `setupBuffers` 
 
 ===================================================================================================================
 
-the model has not been rendered still, there are few ways to make it work
+## the model has not been rendered still, there are few ways to make it work
 
 Yes, that's definitely a step in the right direction! The fact that the OpenGL window no 
 longer crashes and remains open is a positive sign. Now we need to focus on why the rendering isn't displaying anything other than a white background.
@@ -494,7 +496,7 @@ so it appears in the desired location and orientation.
 
 =====================================================================================================================
 
-the breakdown of the shaders and other stuff 
+## the breakdown of the shaders and other stuff 
 
 Here's a breakdown of the steps performed in the function:
 
@@ -547,7 +549,7 @@ c++ data structure, and then making it be useful in rendering the model, setting
 i dont think there might be any problem with this, or maybe there is, i just have to find a proper way to link the 
 shaders and let the shaders understand what it is supposed to do
 
-we can get there. 
+## we can get there. 
 <<<<<-journal->>>>>
 =====================================================================================================================
 
