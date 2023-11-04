@@ -51,6 +51,7 @@ void processKeyboard(unsigned char key, int x, int y) {
         break;
     }
     glutPostRedisplay();
+
 }
 
 void processKeyboardRelease(unsigned char key, int x, int y) {
@@ -125,7 +126,7 @@ void processMouseButton(int button, int state, int x, int y) {
 
 // Function to render the scene
 void renderScene(const std::vector<Vertex>& vertices, GLuint shaderProgram, float aspectRatio) {
-    // Generate and bind VAO and VBO
+    // Generate and bind VAO and VBO for the model 
     GLuint vao, vbo;
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
@@ -169,7 +170,7 @@ void renderScene(const std::vector<Vertex>& vertices, GLuint shaderProgram, floa
 
     // Set up the model-view-projection matrices
     glm::mat4 modelMatrix = glm::mat4(1.0f);
-    modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, -1.0f, -10.0f)); // Translate the model
+    modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, -1.0f, -12.0f)); // Translate the model
     modelMatrix = glm::rotate(modelMatrix, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)); // Rotate the model
     modelMatrix = glm::rotate(modelMatrix, rotationAngle, glm::vec3(0.0f, 1.0f, 0.0f));
     modelMatrix = glm::scale(modelMatrix, glm::vec3(1.0f, 1.0f, 1.0f)); // Scale the model
@@ -188,7 +189,7 @@ void renderScene(const std::vector<Vertex>& vertices, GLuint shaderProgram, floa
 
     // Set up the lighting parameters
     glm::vec3 lightPos(1.0f, 1.0f, 1.0f);
-    glm::vec3 viewPos(0.0f, 0.0f, 3.0f);
+    glm::vec3 viewPos(0.0f, 0.0f, 6.0f);
     GLuint lightPosLoc = glGetUniformLocation(shaderProgram, "lightPos");
     GLuint viewPosLoc = glGetUniformLocation(shaderProgram, "viewPos");
     glUniform3fv(lightPosLoc, 1, glm::value_ptr(lightPos));
@@ -196,6 +197,9 @@ void renderScene(const std::vector<Vertex>& vertices, GLuint shaderProgram, floa
 
     // update on any camera movement
     viewMatrix = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
+
+    // Set the uniform value for the view matrix
+    //glUniformMatrix4fv(viewMatrixLoc, 1, GL_FALSE, glm::value_ptr(viewMatrix));
     
     std::cout << currentKey << std::endl;
     if (currentKey == 101) {

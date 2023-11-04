@@ -1,6 +1,6 @@
 # hair-sim
 
-the final rendition of the project
+## the final rendition of the project
 
 
 ![ezgif com-video-to-gif](https://github.com/mo-shahab/hair-sim/assets/98043363/b9183a46-6c99-418a-bba9-06442dc3013a)
