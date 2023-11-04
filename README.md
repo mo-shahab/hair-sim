@@ -1,5 +1,9 @@
 # hair-sim
 
+the final rendition of the project
+
+
+![ezgif com-video-to-gif](https://github.com/mo-shahab/hair-sim/assets/98043363/b9183a46-6c99-418a-bba9-06442dc3013a)
 this is the whole idea behind this project
 
 <<<<<-journal->>>>>
@@ -362,9 +366,6 @@ to efficiently render and simulate the hair strands.
 Remember, the implementation details can vary depending on your specific requirements and the libraries or frameworks you are using. 
 It's essential to understand the underlying concepts and adapt the code accordingly to suit your needs.
 
-If you have more specific details about your "female_hair" model or any specific requirements, 
-please provide them, and I'll be happy to guide you further in the implementation process.
-
 <<<<<-journal->>>>>
 12-05-2023
 so, until now the loading of the model and other stuff like binding the vao and vbo are done perfectly.
@@ -382,7 +383,7 @@ the biggest setback is solved
 
 when debugged the project found out that the vao and vbo had some error
 
-Based on the information you provided, it appears that the crash is occurring when trying to
+it appears that the crash is occurring when trying to
  generate the vertex array object (VAO) and vertex buffer object (VBO) in the `setupBuffers` function.
  The error message suggests an access violation at memory location 0x0000000000000000, 
 which typically indicates a null pointer or uninitialized variable.
@@ -576,4 +577,80 @@ this is when i changed the drawing attribute from triangles to lines, something 
 so stuff now looks like this its very cool and all
 
 ![Untitled design](https://github.com/mo-shahab/hair-sim/assets/98043363/5c54c9cf-4a52-4bc2-8aae-b187720aea16)
+=====================================================================================================================
+final touches.
+this is how the model is given a little dynamism that it has
+there are a few points that need to be addressed to ensure proper rotation:
 
+1. Move the model rotation calculation to the `renderScene` function, just before setting the model matrix uniform:
+
+   ```cpp
+   // Calculate the rotation angle based on the elapsed time
+   float rotationAngle = glm::radians(10.0f) * glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
+
+   // Calculate the new model matrix with rotation
+   modelMatrix = glm::rotate(modelMatrix, rotationAngle, glm::vec3(0.0f, 1.0f, 0.0f));
+   ```
+
+   This code calculates the rotation angle based on the elapsed time and applies the rotation transformation to the model matrix.
+
+2. Remove the `rotationAngle` declaration and initialization outside the `renderScene` function. Instead, declare it within the function before the rotation calculation:
+
+   ```cpp
+   void renderScene(const std::vector<Vertex>& vertices, GLuint shaderProgram, float aspectRatio) {
+       // ...
+
+       // Declare the rotation angle
+       float rotationAngle;
+
+       // Calculate the rotation angle based on the elapsed time
+       rotationAngle = glm::radians(10.0f) * glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
+
+       // Calculate the new model matrix with rotation
+       modelMatrix = glm::rotate(modelMatrix, rotationAngle, glm::vec3(0.0f, 1.0f, 0.0f));
+
+       // ...
+   }
+   ```
+
+   This way, the rotation angle will be recalculated every frame.
+
+3. Remove the `rotationAngle` increment at the end of the rendering loop since the rotation is handled by the calculation in step 1:
+
+   ```cpp
+   // updating the hair state in each frame
+   // rotationAngle += 10.0f; // Remove this line
+   ```
+
+   The rotation will be handled by the `rotationAngle` calculation within the rendering loop.
+
+With these changes, the model should rotate continuously. Let me know if you encounter any further issues.
+
+To add a background in an OpenGL window, you can make use of the `glClear()` function to clear the color buffer with a specific color. Here's an example of how you can add a solid background color:
+
+1. In the `renderScene` function, add the following line before `glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);`:
+
+   ```cpp
+   glClearColor(0.2f, 0.3f, 0.4f, 1.0f); // Set the background color (RGB values range from 0.0 to 1.0)
+   ```
+
+   This line sets the background color to a dark blue color (0.2, 0.3, 0.4).
+
+2. If you want to add a textured background instead of a solid color, you can use an image as the background texture. You'll need to load the image and bind it as a texture to a quad that covers the entire viewport. Here are the general steps:
+
+   - Load the image using an image loading library (e.g., SOIL, FreeImage, or stb_image).
+   - Generate and bind a texture using `glGenTextures()` and `glBindTexture()`.
+   - Set the texture parameters using `glTexParameteri()`. For example, you can set the texture wrapping behavior (`GL_REPEAT` or `GL_CLAMP_TO_EDGE`) and filtering options (`GL_LINEAR` or `GL_NEAREST`).
+   - Upload the image data to the texture using `glTexImage2D()`.
+   - Create a quad with texture coordinates that cover the entire viewport.
+   - Bind the texture and render the quad using `glDrawArrays()`.
+
+   The specific implementation details will depend on the image loading library and the format of the image you want to use.
+
+Remember to enable texturing by calling `glEnable(GL_TEXTURE_2D);` before rendering the background quad.
+
+the textures in this case are avoided because of the lot of complexity while rendering and 
+to avoid a lot of computational resources 
+================================================================================================
+
+the project is still incomplete and lot of stuff is still left undocumented.....
